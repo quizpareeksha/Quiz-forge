@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Generated MCQs</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container mt-5">
+      <h2 class="text-center mb-4">Generated MCQs</h2>
+
+      <div class="mb-4">
+        <a
+          class="btn btn-success me-2"
+          href="{{ url_for('download_file', filename=txt_filename) }}"
+          >Download as .txt</a
+        >
+        <a
+          class="btn btn-danger me-2"
+          href="{{ url_for('download_file', filename=pdf_filename) }}"
+          >Download as .pdf</a
+        >
+        <a
+          class="btn btn-primary"
+          href="{{ url_for('download_file', filename=json_filename) }}"
+          >Download as .json</a
+        >
+      </div>
+
+      <div
+        class="p-3 bg-white border rounded shadow-sm"
+        style="white-space: pre-wrap"
+      >
+        {{ mcqs }}
+      </div>
+
+      <div class="mt-4">
+        <a href="/" class="btn btn-secondary">Generate Again</a>
+      </div>
+    </div>
+  </body>
+</html>
