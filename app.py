@@ -14,13 +14,15 @@ load_dotenv()
 
 # Flask app setup
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads/'
-app.config['RESULTS_FOLDER'] = 'results/'
+# app.config['UPLOAD_FOLDER'] = 'uploads/'
+# app.config['RESULTS_FOLDER'] = 'results/'
+app.config['UPLOAD_FOLDER'] = '/tmp'
+app.config['RESULTS_FOLDER'] = '/tmp'
 app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'txt', 'docx'}
 
-# Ensure directories exist
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-os.makedirs(app.config['RESULTS_FOLDER'], exist_ok=True)
+# # Ensure directories exist
+# os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+# os.makedirs(app.config['RESULTS_FOLDER'], exist_ok=True)
 
 # Initialize LangChain LLM
 llm = ChatGoogleGenerativeAI(
