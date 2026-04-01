@@ -7,3 +7,4 @@ langchain
 langchain-google-genai
 python-dotenv
 gunicorn
+flask-cors
