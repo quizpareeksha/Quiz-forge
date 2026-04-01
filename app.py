@@ -2,6 +2,7 @@ import os
 import json
 import re
 from flask import Flask, render_template, request, send_file, jsonify
+from flask_cors import CORS
 import pdfplumber
 import docx
 from werkzeug.utils import secure_filename
@@ -14,6 +15,9 @@ load_dotenv()
 
 # Flask app setup
 app = Flask(__name__)
+
+CORS(app)
+
 app.config['UPLOAD_FOLDER'] = '/tmp'
 app.config['RESULTS_FOLDER'] = '/tmp'
 app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'txt', 'docx'}
