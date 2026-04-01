@@ -14,15 +14,14 @@ load_dotenv()
 
 # Flask app setup
 app = Flask(__name__)
-# app.config['UPLOAD_FOLDER'] = 'uploads/'
-# app.config['RESULTS_FOLDER'] = 'results/'
 app.config['UPLOAD_FOLDER'] = '/tmp'
 app.config['RESULTS_FOLDER'] = '/tmp'
 app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'txt', 'docx'}
 
-# # Ensure directories exist
-# os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-# os.makedirs(app.config['RESULTS_FOLDER'], exist_ok=True)
+# --- SECURITY SETUP ---
+# Grabs the secret from your .env file. If it doesn't exist, uses a default for local testing.
+API_SECRET = os.getenv("FLASK_API_SECRET", "my_super_secret_password_123")
+# ----------------------
 
 # Initialize LangChain LLM
 llm = ChatGoogleGenerativeAI(
@@ -88,16 +87,6 @@ def generate_mcqs_with_langchain(text, num_questions):
 
 # Parse MCQs from text to structured format
 def parse_mcqs_to_json(mcq_text, quiz_title="Unknown Quiz"):
-    """
-    Parse MCQ text output into JSON format.
-    Expected format:
-    Question 1: [question]
-    A) [option A]
-    B) [option B]
-    C) [option C]
-    D) [option D]
-    Correct Answer: [A/B/C/D]
-    """
     questions = []
     
     # Split by "Question X:"
@@ -177,6 +166,14 @@ def index():
 
 @app.route('/generate', methods=['POST'])
 def generate_mcqs():
+    # AUTHENTICATION CHECK FOR HTML FORM
+    # Allows secret to be passed via headers OR a hidden form field named 'api_secret'
+    provided_key = request.headers.get("Authorization")
+    form_secret = request.form.get("api_secret")
+    
+    if (not provided_key or provided_key != f"Bearer {API_SECRET}") and form_secret != API_SECRET:
+        return "Unauthorized Request. Invalid API Secret.", 401
+
     if 'file' not in request.files:
         return "No file uploaded."
 
@@ -210,6 +207,13 @@ def generate_mcqs():
 
 @app.route('/generate_json', methods=['POST'])
 def generate_mcqs_json():
+    # --- AUTHENTICATION CHECK FOR REACT APP ---
+    provided_key = request.headers.get("Authorization")
+    
+    if not provided_key or provided_key != f"Bearer {API_SECRET}":
+        return jsonify({"error": "Unauthorized. Invalid API Secret."}), 401
+    # ------------------------------------------
+
     """Generate MCQs and return as JSON"""
     if 'file' not in request.files:
         return jsonify({"error": "No file uploaded."}), 400
@@ -242,6 +246,3 @@ def download_file(filename):
 
 if __name__ == "__main__":
     app.run(debug=False)
-
-
-
