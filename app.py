@@ -24,7 +24,7 @@ app.config['ALLOWED_EXTENSIONS'] = {'pdf', 'txt', 'docx'}
 
 # --- SECURITY SETUP ---
 # Grabs the secret from your .env file. If it doesn't exist, uses a default for local testing.
-API_SECRET = os.getenv("FLASK_API_SECRET", "my_super_secret_password_123")
+# API_SECRET = os.getenv("FLASK_API_SECRET", "my_super_secret_password_123")
 # ----------------------
 
 # Initialize LangChain LLM
