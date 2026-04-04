@@ -206,6 +206,7 @@ def generate_mcqs():
             # Parse and save as JSON
             quiz_data = parse_mcqs_to_json(mcqs, quiz_title=base_name)
             save_mcqs_to_json(quiz_data, json_file)
+            quiz_data["mcqs"] = mcqs
             return jsonify(quiz_data)
             #return render_template('results.html', mcqs=mcqs, txt_filename=txt_file, pdf_filename=pdf_file, json_filename=json_file)
 
