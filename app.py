@@ -10,6 +10,10 @@ from fpdf import FPDF
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 from dotenv import load_dotenv
+import unicodedata
+
+def normalize_math(text):
+    return unicodedata.normalize("NFKC", text)
 
 load_dotenv()
 
@@ -119,11 +123,11 @@ def parse_mcqs_to_json(mcq_text, quiz_title="Unknown Quiz"):
                 options.append(line[2:].strip())
             elif 'Correct Answer:' in line:
                 # Extract the correct answer letter
-                answer_match = re.search(r'[A-D]', line.upper())
-                if answer_match:
-                    answer_letter = answer_match.group()
-                    correct_option = ord(answer_letter) - ord('A')  # Convert A=0, B=1, C=2, D=3
-        
+                match = re.search(r'Correct Answer:\s*([A-D])', line, re.IGNORECASE)
+                if match:
+                    answer_letter = match.group(1).upper()
+                    correct_option = ord(answer_letter) - ord('A')
+
         if len(options) == 4 and correct_option >= 0:
             questions.append({
                 "question": question_text,
@@ -154,11 +158,13 @@ def save_mcqs_to_json(quiz_data, filename):
 def create_pdf(mcqs, filename):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
+    pdf.add_font('DejaVu', '', 'DejaVuSans.ttf', uni=True)
+    pdf.set_font('DejaVu', '', 12)
 
     for mcq in mcqs.split("## MCQ"):
-        if mcq.strip():
-            pdf.multi_cell(0, 10, mcq.strip())
+        mcq = normalize_math(mcq.strip())
+        if mcq:
+            pdf.multi_cell(0, 10, mcq)
             pdf.ln(5)
 
     path = os.path.join(app.config['RESULTS_FOLDER'], filename)
@@ -206,9 +212,9 @@ def generate_mcqs():
             # Parse and save as JSON
             quiz_data = parse_mcqs_to_json(mcqs, quiz_title=base_name)
             save_mcqs_to_json(quiz_data, json_file)
-            quiz_data["mcqs"] = mcqs
+
             return jsonify(quiz_data)
-            #return render_template('results.html', mcqs=mcqs, txt_filename=txt_file, pdf_filename=pdf_file, json_filename=json_file)
+            # return render_template('results.html', mcqs=mcqs, txt_filename=txt_file, pdf_filename=pdf_file, json_filename=json_file)
 
     return "Invalid file format or upload error."
 
