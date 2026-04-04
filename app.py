@@ -177,8 +177,8 @@ def generate_mcqs():
     provided_key = request.headers.get("Authorization")
     form_secret = request.form.get("api_secret")
     
-    if (not provided_key or provided_key != f"Bearer {API_SECRET}") and form_secret != API_SECRET:
-        return "Unauthorized Request. Invalid API Secret.", 401
+    # if (not provided_key or provided_key != f"Bearer {API_SECRET}") and form_secret != API_SECRET:
+    #     return "Unauthorized Request. Invalid API Secret.", 401
 
     if 'file' not in request.files:
         return "No file uploaded."
