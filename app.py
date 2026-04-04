@@ -61,6 +61,8 @@ D) [option D]
 Correct Answer: [A/B/C/D]
 
 (Continue for all {num_questions} questions)
+
+Give different options as answer.
 """
 )
 
