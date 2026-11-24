@@ -8,6 +8,7 @@ import docx
 from werkzeug.utils import secure_filename
 from fpdf import FPDF
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from dotenv import load_dotenv
 import unicodedata
@@ -32,9 +33,16 @@ API_SECRET = os.getenv("FLASK_API_SECRET", "my_super_secret_password_123")
 # ----------------------
 
 # Initialize LangChain LLM
-llm = ChatGoogleGenerativeAI(
+'''llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     api_key=os.getenv("GOOGLE_API_KEY"),
+    temperature=0.0
+)'''
+
+llm = ChatOpenAI(
+    model="deepseek-flash",
+    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    base_url="https://api.deepseek.com",
     temperature=0.0
 )
 
